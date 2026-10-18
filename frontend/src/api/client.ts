@@ -193,6 +193,11 @@ export const sessionApi = {
       method: 'POST',
     }),
 
+  refund: (id: number, reason?: string): Promise<PaySessionResponse> =>
+    request<PaySessionResponse>(`/admin/sessions/${id}/refund`, {
+      method: 'POST',
+      body: JSON.stringify({ reason: reason || 'Customer refund request' }),
+    }),
 };
 
 // ── Wallet & Payment APIs ───────────────────────────────────────────────────

@@ -23,14 +23,14 @@ export const RegisterPage: React.FC = () => {
         fullName,
         email,
         password,
-        phone: phone.trim() ? phone.trim() : undefined,
+        phone: phone.trim() ? phone : undefined,
       });
       navigate('/dashboard');
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Registration failed. Please check the provided information.');
+        setError('Registration failed. Please check your information.');
       }
     } finally {
       setSubmitting(false);
@@ -39,23 +39,23 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-[75vh] px-4 py-8">
-      <div className="w-full max-w-md bg-slate-900/80 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl space-y-6">
+      <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-9 shadow-xl shadow-blue-900/5 space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 items-center justify-center shadow-md mb-2">
+          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white items-center justify-center shadow-md shadow-blue-500/25 mb-2">
             <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Create Driver Profile</h1>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Join the VoltFlow network for smart charging and energy tracking
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Create Driver Profile</h1>
+          <p className="text-xs sm:text-sm text-slate-500">
+            Join VoltFlow to charge your EV across superchargers with zero friction
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs sm:text-sm flex items-start gap-2.5">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-2.5">
             <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -66,7 +66,7 @@ export const RegisterPage: React.FC = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
               Full Name
             </label>
             <input
@@ -75,12 +75,12 @@ export const RegisterPage: React.FC = () => {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Alex Morgan"
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition text-sm"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm shadow-xs"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
               Email Address
             </label>
             <input
@@ -89,12 +89,12 @@ export const RegisterPage: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="alex@example.com"
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition text-sm"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm shadow-xs"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
               Password (min. 8 characters)
             </label>
             <input
@@ -104,31 +104,31 @@ export const RegisterPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition text-sm"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm shadow-xs"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Mobile Phone <span className="text-slate-500 font-normal lowercase">(optional)</span>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700">
+              Mobile Phone <span className="text-slate-400 font-normal lowercase">(optional)</span>
             </label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+1 (555) 234-5678"
-              className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition text-sm"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm shadow-xs"
             />
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 px-4 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2 text-sm mt-6 active:scale-[0.99]"
+            className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-md shadow-blue-500/25 transition-all duration-200 flex items-center justify-center gap-2 text-sm mt-6 active:scale-[0.99] hover:scale-[1.01]"
           >
             {submitting ? (
               <>
-                <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 <span>Creating Account...</span>
               </>
             ) : (
@@ -138,10 +138,10 @@ export const RegisterPage: React.FC = () => {
         </form>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-slate-800 text-center">
-          <p className="text-xs text-slate-400">
+        <div className="pt-4 border-t border-slate-100 text-center">
+          <p className="text-xs text-slate-500">
             Already registered?{' '}
-            <Link to="/login" className="text-emerald-400 font-semibold hover:underline">
+            <Link to="/login" className="text-blue-600 font-bold hover:text-blue-700 hover:underline">
               Sign in here
             </Link>
           </p>

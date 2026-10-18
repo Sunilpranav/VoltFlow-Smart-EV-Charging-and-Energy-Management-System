@@ -32,23 +32,23 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#080c14]/90 border-b border-slate-800/80 transition-all">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/85 border-b border-slate-200/90 shadow-xs transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                <svg className="w-5 h-5 text-slate-950 fill-current" viewBox="0 0 24 24">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 flex items-center justify-center shadow-md shadow-blue-500/25 group-hover:scale-105 group-hover:shadow-blue-500/40 transition-all duration-300">
+                <svg className="w-5 h-5 text-white fill-current drop-shadow-xs" viewBox="0 0 24 24">
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
               </div>
               <div className="flex flex-col">
-                <span className="text-lg font-black tracking-tight text-white group-hover:text-emerald-400 transition-colors">
-                  Volt<span className="text-emerald-400">Flow</span>
+                <span className="text-xl font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+                  Volt<span className="text-blue-600">Flow</span>
                 </span>
-                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium -mt-1">
-                  EV Energy OS
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold -mt-1">
+                  Smart EV Energy Network
                 </span>
               </div>
             </Link>
@@ -58,10 +58,10 @@ export const Navbar: React.FC = () => {
           <nav className="hidden md:flex items-center gap-1.5">
             <Link
               to="/stations"
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                 isActive('/stations')
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
               }`}
             >
               Charging Hubs
@@ -71,43 +71,43 @@ export const Navbar: React.FC = () => {
               <>
                 <Link
                   to="/dashboard"
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isActive('/dashboard')
-                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
                   }`}
                 >
                   Dashboard
                 </Link>
                 <Link
                   to="/vehicles"
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isActive('/vehicles')
-                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
                   }`}
                 >
                   My Garage
                 </Link>
                 <Link
                   to="/sessions"
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isActive('/sessions')
-                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
                   }`}
                 >
                   Sessions
                 </Link>
                 <Link
                   to="/wallet"
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
                     isActive('/wallet')
-                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
                   }`}
                 >
-                  <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                   </svg>
                   <span>Wallet & Plans</span>
@@ -117,11 +117,11 @@ export const Navbar: React.FC = () => {
                     to="/admin"
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                       location.pathname.startsWith('/admin')
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm shadow-amber-500/10'
-                        : 'text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-amber-500/20'
+                        ? 'bg-blue-100/70 text-blue-800 border border-blue-300 shadow-xs'
+                        : 'text-blue-700 hover:text-blue-900 hover:bg-blue-50 border border-blue-200'
                     }`}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
                     <span>Admin Operations</span>
                   </Link>
                 )}
@@ -132,30 +132,30 @@ export const Navbar: React.FC = () => {
           {/* Right: Auth Profile / Actions */}
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
-              <div className="flex items-center gap-3 pl-3 border-l border-slate-800/80">
+              <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
                 <div className="flex flex-col text-right">
-                  <span className="text-xs font-bold text-slate-100">{user?.fullName || 'Driver'}</span>
-                  <span className="text-[10px] text-emerald-400 font-mono tracking-wider">{user?.role || 'CUSTOMER'}</span>
+                  <span className="text-xs font-bold text-slate-800">{user?.fullName || 'Driver'}</span>
+                  <span className="text-[10px] text-blue-600 font-mono tracking-wider font-semibold">{user?.role || 'CUSTOMER'}</span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 border border-slate-800 hover:border-rose-500/30 transition-all"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all"
                   title="Sign Out"
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <Link
                   to="/login"
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 border border-transparent hover:border-slate-800 transition-all"
+                  className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 border border-slate-200 bg-white transition-all duration-200 shadow-xs"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-1.5 rounded-xl text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-md shadow-emerald-500/20 transition-all active:scale-[0.98]"
+                  className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Get Started
                 </Link>
@@ -168,7 +168,7 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#080c14]"
+              className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-nav-menu"
@@ -187,11 +187,11 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div id="mobile-nav-menu" className="md:hidden border-t border-slate-800 bg-[#080c14]/95 px-4 pt-3 pb-5 space-y-2 backdrop-blur-xl">
+        <div id="mobile-nav-menu" className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg">
           <Link
             to="/stations"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800"
+            className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
           >
             Charging Hubs
           </Link>
@@ -200,28 +200,28 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
               >
                 Dashboard
               </Link>
               <Link
                 to="/vehicles"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
               >
                 My Garage
               </Link>
               <Link
                 to="/sessions"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
               >
                 Charging Sessions
               </Link>
               <Link
                 to="/wallet"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
               >
                 Wallet & Plans
               </Link>
@@ -229,40 +229,40 @@ export const Navbar: React.FC = () => {
                 <Link
                   to="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-sm font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20"
+                  className="block px-3 py-2 rounded-lg text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200"
                 >
-                  🛡️ Admin Operations
+                  ⚡ Admin Operations
                 </Link>
               )}
-              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
                 <div>
-                  <div className="text-sm font-bold text-white">{user?.fullName}</div>
-                  <div className="text-xs text-slate-400 font-mono">{user?.email}</div>
+                  <div className="text-sm font-bold text-slate-800">{user?.fullName}</div>
+                  <div className="text-xs text-blue-600 font-mono">{user?.email}</div>
                 </div>
                 <button
                   onClick={() => {
                     handleLogout();
                     setMobileMenuOpen(false);
                   }}
-                  className="px-3 py-1.5 text-xs text-rose-400 bg-rose-500/10 rounded-lg border border-rose-500/20 font-semibold"
+                  className="px-3 py-1.5 text-xs text-rose-600 bg-rose-50 rounded-lg border border-rose-200 font-semibold"
                 >
                   Logout
                 </button>
               </div>
             </>
           ) : (
-            <div className="pt-3 border-t border-slate-800 flex gap-2">
+            <div className="pt-3 border-t border-slate-200 flex gap-2">
               <Link
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2.5 text-xs font-semibold text-slate-200 bg-slate-900 border border-slate-800 rounded-xl"
+                className="flex-1 text-center py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-xl"
               >
                 Sign In
               </Link>
               <Link
                 to="/register"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2.5 text-xs font-bold text-slate-950 bg-emerald-400 rounded-xl"
+                className="flex-1 text-center py-2.5 text-xs font-bold text-white bg-blue-600 rounded-xl shadow-md"
               >
                 Get Started
               </Link>

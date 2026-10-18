@@ -8,85 +8,87 @@ export const StationsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters & Sorting
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<'default' | 'availability' | 'name'>('default');
 
-  useEffect(() => {
-    let isMounted = true;
-    const timer = setTimeout(async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await stationApi.list(searchTerm, statusFilter);
-        if (isMounted) {
-          setStations(data);
-        }
-      } catch (err: unknown) {
-        if (isMounted) {
-          if (err instanceof Error) {
-            setError(err.message);
-          } else {
-            setError('Failed to fetch charging stations');
-          }
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+  const fetchStations = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await stationApi.list();
+      setStations(data);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to fetch charging hubs');
       }
-    }, 200);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-    };
-  }, [searchTerm, statusFilter]);
-
-  // Client-side sorting on real API results
-  const sortedStations = useMemo(() => {
-    const list = [...stations];
-    if (sortBy === 'availability') {
-      return list.sort((a, b) => b.availableChargers - a.availableChargers);
+    } finally {
+      setLoading(false);
     }
-    if (sortBy === 'name') {
-      return list.sort((a, b) => a.name.localeCompare(b.name));
+  };
+
+  useEffect(() => {
+    fetchStations();
+  }, []);
+
+  const filteredStations = useMemo(() => {
+    return stations.filter((s) => {
+      const matchesSearch =
+        s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.address.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'ALL' || s.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [stations, searchTerm, statusFilter]);
+
+  const sortedStations = useMemo(() => {
+    const list = [...filteredStations];
+    if (sortBy === 'availability') {
+      list.sort((a, b) => b.availableChargers - a.availableChargers);
+    } else if (sortBy === 'name') {
+      list.sort((a, b) => a.name.localeCompare(b.name));
     }
     return list;
-  }, [stations, sortBy]);
+  }, [filteredStations, sortBy]);
 
   return (
     <div className="space-y-8">
-      {/* ── HEADER ────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Public Charging Infrastructure</span>
+      {/* ── HEADER ─────────────────────────────────────────────────────────── */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
+            <span>Live Grid Status • High-Speed Hubs</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Find Charging Hubs
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Browse verified high-speed DC stalls, verify real-time connector availability, and initiate sessions
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Charging Hub Network</h1>
+          <p className="text-sm text-slate-500 max-w-xl">
+            Locate high-power DC fast chargers and Level 2 AC stations. Check real-time connector occupancy and active rates.
           </p>
+        </div>
+        <div className="text-left md:text-right">
+          <span className="font-mono text-2xl font-black text-blue-600 tabular-nums">
+            {stations.filter((s) => s.status === 'ACTIVE').length}
+          </span>
+          <span className="text-xs text-slate-500 font-semibold block uppercase tracking-wider">
+            Active Hubs Online
+          </span>
         </div>
       </div>
 
-      {/* ── SEARCH, FILTER & SORT CONTROLS ─────────────────────────────────── */}
-      <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl backdrop-blur-md">
-        {/* Search Input */}
-        <div className="relative w-full md:w-80">
+      {/* ── FILTER & CONTROLS TOOLBAR ───────────────────────────────────────── */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
+        {/* Search */}
+        <div className="relative w-full md:max-w-md">
           <label htmlFor="station-search" className="sr-only">
-            Search charging hubs by name or address
+            Search charging hubs
           </label>
           <svg
-            className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"
+            className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            aria-hidden="true"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -96,7 +98,7 @@ export const StationsPage: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search hub by name or address..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs sm:text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition"
+            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs sm:text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
           />
         </div>
 
@@ -104,7 +106,7 @@ export const StationsPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Status Filter */}
           <div className="flex items-center gap-2">
-            <label htmlFor="status-filter" className="text-xs text-slate-400 font-medium whitespace-nowrap">
+            <label htmlFor="status-filter" className="text-xs text-slate-600 font-medium whitespace-nowrap">
               Status:
             </label>
             <select
@@ -112,7 +114,7 @@ export const StationsPage: React.FC = () => {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               aria-label="Filter by hub operational status"
-              className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition cursor-pointer"
+              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer"
             >
               <option value="ALL">All Hubs</option>
               <option value="ACTIVE">Operational Only</option>
@@ -122,7 +124,7 @@ export const StationsPage: React.FC = () => {
 
           {/* Sort Control */}
           <div className="flex items-center gap-2">
-            <label htmlFor="sort-filter" className="text-xs text-slate-400 font-medium whitespace-nowrap">
+            <label htmlFor="sort-filter" className="text-xs text-slate-600 font-medium whitespace-nowrap">
               Sort:
             </label>
             <select
@@ -130,7 +132,7 @@ export const StationsPage: React.FC = () => {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'default' | 'availability' | 'name')}
               aria-label="Sort charging hubs"
-              className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition cursor-pointer"
+              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer"
             >
               <option value="default">Default</option>
               <option value="availability">Most Stalls Free</option>
@@ -142,14 +144,14 @@ export const StationsPage: React.FC = () => {
 
       {/* Error Notice */}
       {error && (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs sm:text-sm flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-center justify-between">
           <span>{error}</span>
           <button
             onClick={() => {
               setSearchTerm('');
               setStatusFilter('ALL');
             }}
-            className="text-xs underline hover:text-rose-300 ml-3"
+            className="text-xs underline hover:text-rose-800 ml-3 font-semibold"
           >
             Retry
           </button>
@@ -160,19 +162,19 @@ export const StationsPage: React.FC = () => {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-60 bg-slate-900/60 rounded-3xl border border-slate-800" />
+            <div key={i} className="h-60 bg-white rounded-3xl border border-slate-200" />
           ))}
         </div>
       ) : sortedStations.length === 0 ? (
-        <div className="p-12 bg-slate-900/40 border border-dashed border-slate-800 rounded-3xl text-center space-y-3">
-          <p className="text-xs sm:text-sm text-slate-400">No charging hubs match the specified criteria.</p>
+        <div className="p-12 bg-white border border-dashed border-slate-200 rounded-3xl text-center space-y-3">
+          <p className="text-xs sm:text-sm text-slate-500">No charging hubs match the specified criteria.</p>
           <button
             onClick={() => {
               setSearchTerm('');
               setStatusFilter('ALL');
               setSortBy('default');
             }}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl text-xs font-semibold transition cursor-pointer"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
           >
             Reset Filters
           </button>
@@ -188,24 +190,24 @@ export const StationsPage: React.FC = () => {
             return (
               <div
                 key={s.id}
-                className="bg-slate-900/60 border border-slate-800 hover:border-slate-700 rounded-3xl p-6 transition-all duration-200 flex flex-col justify-between space-y-5 shadow-lg group"
+                className="bg-white border border-slate-200 hover:border-blue-400 rounded-3xl p-6 transition-all duration-300 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:shadow-blue-500/5 hover:scale-[1.01] group"
               >
                 <div className="space-y-4">
                   {/* Header & Status */}
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-400">
+                      <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-blue-600">
                         Station #{s.id}
                       </span>
-                      <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                         {s.name}
                       </h3>
                     </div>
                     <span
                       className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
                         s.status === 'ACTIVE'
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                          : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          : 'bg-amber-50 text-amber-700 border-amber-200'
                       }`}
                     >
                       {s.status}
@@ -213,8 +215,8 @@ export const StationsPage: React.FC = () => {
                   </div>
 
                   {/* Location */}
-                  <p className="text-xs text-slate-400 flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <p className="text-xs text-slate-500 flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -222,30 +224,30 @@ export const StationsPage: React.FC = () => {
                   </p>
 
                   {/* Capacity & Telemetry */}
-                  <div className="bg-slate-950/60 p-3 rounded-2xl border border-slate-800 space-y-2">
+                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400 font-medium">Stall Availability</span>
-                      <span className="font-mono font-bold text-emerald-400">
+                      <span className="text-slate-600 font-medium">Stall Availability</span>
+                      <span className="font-mono font-bold text-blue-700">
                         {s.availableChargers} / {s.totalChargers} Free
                       </span>
                     </div>
                     {/* Progress bar */}
-                    <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden border border-slate-200 p-0.5">
                       <div
-                        className="bg-emerald-400 h-1.5 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-blue-600 via-sky-500 to-blue-400 h-full rounded-full transition-all duration-300"
                         style={{
                           width: `${s.totalChargers > 0 ? (s.availableChargers / s.totalChargers) * 100 : 0}%`,
                         }}
                       />
                     </div>
-                    <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-1">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1">
                       <span>GPS: {hasCoords ? `${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}` : 'N/A'}</span>
                       {osmUrl && (
                         <a
                           href={osmUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-emerald-400 hover:underline flex items-center gap-1"
+                          className="text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 font-semibold"
                           title="Open location in OpenStreetMap (free map)"
                         >
                           <span>Open Map</span>
@@ -260,7 +262,7 @@ export const StationsPage: React.FC = () => {
                 <div className="pt-2">
                   <Link
                     to={`/stations/${s.id}`}
-                    className="w-full py-2.5 px-4 bg-slate-800/80 hover:bg-slate-700 hover:text-emerald-400 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 transition active:scale-[0.99]"
+                    className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.99] hover:scale-[1.01]"
                   >
                     <span>Inspect Chargers & Tariffs</span>
                     <span>→</span>

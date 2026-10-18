@@ -83,42 +83,42 @@ export const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-slate-100 pb-16">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 pb-16">
       {/* Top Banner / Breadcrumb & Status */}
-      <div className="bg-[#0e1524]/95 border-b border-[#1e293b] backdrop-blur-md sticky top-16 z-40">
+      <div className="bg-white/95 border-b border-slate-200 sticky top-16 z-40 backdrop-blur-md shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-sm shadow-amber-500/10">
+              <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shadow-xs">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-extrabold text-white tracking-tight">VoltFlow Administration</h1>
-                  <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                  <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">VoltFlow Administration</h1>
+                  <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                     Live System
                   </span>
-                  <span className="px-2 py-0.5 text-[10px] uppercase font-mono font-bold rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                  <span className="px-2 py-0.5 text-[10px] uppercase font-mono font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-300">
                     {user?.role || 'ADMIN'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Infrastructure deployment, tariff matrices, charging telemetry, financial control & immutable audit logs
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-400 bg-[#080c14] px-3 py-1.5 rounded-xl border border-[#1e293b]">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="font-medium text-slate-400">Core API:</span>
-              <span className="font-mono text-emerald-400 font-semibold">ONLINE (8080)</span>
+            <div className="flex items-center gap-2 text-xs text-slate-600 bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-xs">
+              <span className="inline-block w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+              <span className="font-medium text-slate-500">Core API:</span>
+              <span className="font-mono text-slate-900 font-semibold">ONLINE (8080)</span>
             </div>
           </div>
 
           {/* Sub Navigation Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pt-3 mt-2 border-t border-[#1e293b] no-scrollbar">
+          <div className="flex items-center gap-1.5 overflow-x-auto pt-3 mt-2 border-t border-slate-100 no-scrollbar">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -127,8 +127,8 @@ export const AdminLayout: React.FC = () => {
                 className={({ isActive }) =>
                   `px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm shadow-emerald-500/10'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-[#151e32] border border-transparent'
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
                   }`
                 }
               >
@@ -147,3 +147,5 @@ export const AdminLayout: React.FC = () => {
     </div>
   );
 };
+
+export default AdminLayout;

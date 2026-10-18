@@ -4,30 +4,36 @@
   --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Theme Colors */
-  --bg-canvas: #080c14;
-  --bg-surface: #0e1524;
-  --bg-surface-elevated: #151e32;
-  --bg-surface-hover: #1c2740;
+  /* Professional Enterprise Light Blue & White Palette */
+  --bg-canvas: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-surface-hover: #f1f5f9;
   
-  --border-subtle: #1e293b;
-  --border-muted: #334155;
-  --border-accent: rgba(16, 185, 129, 0.3);
+  --border-subtle: #e2e8f0;
+  --border-muted: #cbd5e1;
+  --border-accent: rgba(37, 99, 235, 0.4);
 
-  --accent-lime: #10b981;
-  --accent-lime-hover: #059669;
-  --accent-lime-muted: rgba(16, 185, 129, 0.12);
+  --accent-blue: #2563eb;
+  --accent-blue-hover: #1d4ed8;
+  --accent-blue-light: #3b82f6;
+  --accent-blue-muted: rgba(37, 99, 235, 0.08);
+  --accent-cyan: #0284c7;
+  --accent-white: #ffffff;
 }
 
 body {
   margin: 0;
   padding: 0;
   font-family: var(--sans);
-  background-color: var(--bg-canvas);
-  color: #f8fafc;
+  background-color: #f8fafc;
+  color: #0f172a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(219, 234, 254, 0.5) 0%, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(224, 242, 254, 0.4) 0%, transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(239, 246, 255, 0.6) 0%, transparent 50%);
   background-attachment: fixed;
 }
 
@@ -38,20 +44,21 @@ body {
   flex-direction: column;
 }
 
-/* Custom subtle scrollbar */
+/* Custom subtle professional scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #080c14;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 9999px;
+  border: 2px solid #f1f5f9;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #2563eb;
 }
 
 /* Tabular figures for numbers and financial data */
@@ -59,18 +66,132 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Pulse animation for live charging energy flow */
+/* ── Dynamic Animation Effects ─────────────────────────────────────────────── */
+
+/* 1. Pulse animation for live charging energy flow */
 @keyframes energyPulse {
   0%, 100% {
     opacity: 1;
     transform: scale(1);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.35);
   }
   50% {
-    opacity: 0.6;
-    transform: scale(0.98);
+    opacity: 0.85;
+    transform: scale(0.985);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.15);
+  }
+}
+
+/* 2. Floating effect for cards and hero visuals */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* 3. Luminous Shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 4. Electric Glow Breathing */
+@keyframes blueGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(2, 132, 199, 0.6));
+  }
+}
+
+/* 5. Ripple wave for active station status */
+@keyframes rippleWave {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+/* 6. Rotating halo */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
 .animate-energy {
-  animation: energyPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: energyPulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: float 4.5s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+.animate-glow-blue {
+  animation: blueGlow 3s ease-in-out infinite;
+}
+
+.animate-ripple {
+  animation: rippleWave 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
+
+/* ── Modern Professional Light Utility Classes ────────────────────────────── */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+}
+
+.glass-panel-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  transform: translateY(-2px);
+  border-color: #93c5fd;
+  box-shadow: 0 12px 28px -4px rgba(37, 99, 235, 0.12), 0 6px 12px -2px rgba(37, 99, 235, 0.06);
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
