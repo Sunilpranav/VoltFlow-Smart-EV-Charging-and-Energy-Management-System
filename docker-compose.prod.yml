@@ -1,0 +1,100 @@
+# ==============================================================================
+# VoltFlow Production Docker Compose Configuration
+#
+# Architecture:
+# - Edge: Nginx Gateway (SSL/TLS termination on 443, HTTP->HTTPS redirect on 80)
+# - App: Spring Boot 3 Backend on isolated internal gateway network (no host ports)
+# - Data: MySQL 8.0 on strictly isolated internal backend network (no host ports)
+# ==============================================================================
+services:
+  # ── Database Service (MySQL 8.0) ───────────────────────────────────────────
+  db:
+    image: mysql:8.0.44
+    container_name: voltflow-db-prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Error: MYSQL_ROOT_PASSWORD must be set in .env}"
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-voltflow}
+      MYSQL_USER: ${MYSQL_USER:-voltflow_user}
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?Error: MYSQL_PASSWORD must be set in .env}"
+    # Security: No ports exposed to the host machine or public internet.
+    volumes:
+      - db_data_prod:/var/lib/mysql
+    networks:
+      - voltflow-internal-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Backend Service (Spring Boot 3 + Java 17) ──────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: voltflow-backend-prod
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-voltflow}
+      MYSQL_USER: ${MYSQL_USER:-voltflow_user}
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?Error: MYSQL_PASSWORD must be set in .env}"
+      JWT_SECRET: "${JWT_SECRET:?Error: JWT_SECRET must be set in .env and be at least 32 chars}"
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://voltflow.yourdomain.com}
+      SHOW_SQL: "false"
+    # Security: No host ports exposed directly; traffic is proxied via gateway.
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - voltflow-internal-net
+      - voltflow-gateway-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── Production Gateway & Frontend (Nginx with SSL/TLS) ─────────────────────
+  gateway:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_BASE_URL: /api
+    container_name: voltflow-gateway-prod
+    restart: always
+    ports:
+      - "80:80"    # HTTP redirect
+      - "443:443"  # HTTPS / TLS termination
+    volumes:
+      - ./certs:/etc/nginx/ssl:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - voltflow-gateway-net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+# ── Isolated Private Networks ────────────────────────────────────────────────
+networks:
+  # Internal network with no public external access (secures database)
+  voltflow-internal-net:
+    internal: true
+  # Frontend to backend communication network
+  voltflow-gateway-net:
+    driver: bridge
+
+# ── Persistent Storage Volumes ───────────────────────────────────────────────
+volumes:
+  db_data_prod:
+    name: voltflow_db_data_prod

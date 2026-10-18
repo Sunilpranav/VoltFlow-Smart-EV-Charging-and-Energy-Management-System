@@ -1,0 +1,62 @@
+# ── Environment & Secrets ───────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+certs/
+ssl/
+secrets/
+
+# ── Java & Maven ────────────────────────────────────────────────────────────
+target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ── Node & Frontend ─────────────────────────────────────────────────────────
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── IDEs & Operating Systems ────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Database Dumps & Backups ────────────────────────────────────────────────
+*.sql
+!backend/src/main/resources/db/migration/*.sql
+!backend/src/test/resources/**/*.sql
+*.dump
+*.tar
+*.gz
+backups/
+db_backups/
+
+# ── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
