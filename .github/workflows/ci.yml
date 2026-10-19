@@ -9,13 +9,13 @@ on:
 jobs:
   backend-test:
     name: Backend Tests (Java 17 / Spring Boot)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -23,17 +23,35 @@ jobs:
 
       - name: Run Backend Integration Tests
         working-directory: backend
-        run: mvn clean test
+        run: |
+          set -o pipefail
+          mvn -B clean test 2>&1 | tee mvn.log
+
+      # Shows exactly which tests failed in the run's Annotations / Summary
+      - name: Report backend failures
+        if: failure()
+        working-directory: backend
+        run: |
+          [ -f mvn.log ] || exit 0
+          {
+            echo '### Backend test failures'
+            echo '```'
+            grep -E '^\[ERROR\]' mvn.log | head -80
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          grep -E '^\[ERROR\]' mvn.log | head -15 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
 
   frontend-build:
     name: Frontend Build & Typecheck (React 19 / Vite)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
