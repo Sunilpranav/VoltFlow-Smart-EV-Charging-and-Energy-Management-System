@@ -192,12 +192,6 @@ export const sessionApi = {
     request<PaySessionResponse>(`/sessions/${id}/pay`, {
       method: 'POST',
     }),
-
-  refund: (id: number, reason?: string): Promise<PaySessionResponse> =>
-    request<PaySessionResponse>(`/admin/sessions/${id}/refund`, {
-      method: 'POST',
-      body: JSON.stringify({ reason: reason || 'Customer refund request' }),
-    }),
 };
 
 // ── Wallet & Payment APIs ───────────────────────────────────────────────────
@@ -411,6 +405,3 @@ export const adminApi = {
     return request<PageResponse<AdminAuditLog>>(`/admin/audit-logs${qs}`);
   },
 };
-
-
-

@@ -135,9 +135,9 @@ class AuthControllerIntegrationTest {
 
     @Test
     @Order(8)
-    void protectedEndpoint_withoutToken_returns403() throws Exception {
+    void protectedEndpoint_withoutToken_returns401() throws Exception {
         mockMvc.perform(get("/api/vehicles"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -154,10 +154,10 @@ class AuthControllerIntegrationTest {
 
     @Test
     @Order(10)
-    void protectedEndpoint_withTamperedToken_returns403() throws Exception {
+    void protectedEndpoint_withTamperedToken_returns401() throws Exception {
         mockMvc.perform(get("/api/vehicles")
                         .header("Authorization", "Bearer " + jwtToken + "tampered"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     // ── Actuator ──────────────────────────────────────────────────────────────
@@ -205,9 +205,9 @@ class AuthControllerIntegrationTest {
 
     @Test
     @Order(15)
-    void getMe_withoutToken_returns403() throws Exception {
+    void getMe_withoutToken_returns401() throws Exception {
         mockMvc.perform(get("/api/auth/me"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     // ── Admin Access Verification ─────────────────────────────────────────────

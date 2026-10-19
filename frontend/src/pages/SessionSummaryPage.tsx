@@ -11,7 +11,6 @@ export const SessionSummaryPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [paying, setPaying] = useState<boolean>(false);
-  const [refunding, setRefunding] = useState<boolean>(false);
   const [paymentMessage, setPaymentMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
@@ -62,29 +61,6 @@ export const SessionSummaryPage: React.FC = () => {
       });
     } finally {
       setPaying(false);
-    }
-  };
-
-  const handleRefund = async () => {
-    if (!summary) return;
-    if (!window.confirm('Are you sure you want to refund this session payment back to your wallet?')) return;
-    setRefunding(true);
-    setPaymentMessage(null);
-    try {
-      const res = await sessionApi.refund(summary.sessionId);
-      setSummary((prev) => (prev ? { ...prev, paymentStatus: 'REFUNDED' } : null));
-      setWallet((prev) => (prev ? { ...prev, balance: res.remainingWalletBalance } : null));
-      setPaymentMessage({
-        text: `Refund of ${formatCurrency(res.amountPaid)} returned to wallet! Transaction ID: #${res.transactionId}`,
-        type: 'success',
-      });
-    } catch (err) {
-      setPaymentMessage({
-        text: err instanceof ApiError ? err.message : 'Failed to refund session payment',
-        type: 'error',
-      });
-    } finally {
-      setRefunding(false);
     }
   };
 
@@ -357,29 +333,6 @@ export const SessionSummaryPage: React.FC = () => {
                       </button>
                     )}
                   </>
-                )}
-
-                {summary.paymentStatus === 'PAID' && (
-                  <button
-                    onClick={handleRefund}
-                    disabled={refunding}
-                    className="px-3.5 py-2 rounded-xl bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 font-semibold text-xs border border-slate-300 hover:border-rose-300 transition flex items-center gap-1.5 cursor-pointer shadow-xs"
-                    title="Refund settlement back to your wallet ledger"
-                  >
-                    {refunding ? (
-                      <>
-                        <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        <span>Refunding...</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                        </svg>
-                        <span>Request Wallet Refund</span>
-                      </>
-                    )}
-                  </button>
                 )}
               </div>
             </div>

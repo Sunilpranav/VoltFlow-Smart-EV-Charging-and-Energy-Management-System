@@ -104,12 +104,12 @@ class ChargingSessionControllerIntegrationTest {
 
     @Test
     @Order(1)
-    void startSession_unauthenticated_returns403() throws Exception {
+    void startSession_unauthenticated_returns401() throws Exception {
         var req = new StartSessionRequest(customer1VehicleId, availableCcs2ChargerId);
         mockMvc.perform(post("/api/sessions/start")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

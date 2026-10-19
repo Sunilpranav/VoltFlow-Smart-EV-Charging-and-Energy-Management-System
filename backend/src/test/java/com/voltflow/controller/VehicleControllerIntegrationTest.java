@@ -61,9 +61,9 @@ class VehicleControllerIntegrationTest {
 
     @Test
     @Order(1)
-    void getVehicles_unauthenticated_returns403() throws Exception {
+    void getVehicles_unauthenticated_returns401() throws Exception {
         mockMvc.perform(get("/api/vehicles"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

@@ -100,9 +100,9 @@ class WalletControllerIntegrationTest {
     }
 
     @Test
-    void getWallet_unauthorized_returns403() throws Exception {
+    void getWallet_unauthorized_returns401() throws Exception {
         mockMvc.perform(get("/api/wallet"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -328,28 +328,24 @@ class WalletControllerIntegrationTest {
     }
 
     @Test
-    void refundChargingSession_success_creditsWalletAndSetsRefunded() throws Exception {
+    void customerRefundEndpoint_isRemoved_andDoesNotChangeBalance() throws Exception {
         topUpTestUser(BigDecimal.valueOf(50.00));
         ChargingSession session = createCompletedSession(testUser, BigDecimal.valueOf(20.00));
 
-        // Pay first
         mockMvc.perform(post("/api/sessions/" + session.getId() + "/pay")
                         .header("Authorization", "Bearer " + testUserToken))
                 .andExpect(status().isOk());
 
-        // Refund
+        // Customers can no longer refund themselves: the request must be rejected
         mockMvc.perform(post("/api/sessions/" + session.getId() + "/refund")
                         .header("Authorization", "Bearer " + testUserToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.paymentStatus").value("REFUNDED"))
-                .andExpect(jsonPath("$.amountPaid").value(20.00))
-                .andExpect(jsonPath("$.remainingWalletBalance").value(50.00));
+                .andExpect(res -> assertThat(res.getResponse().getStatus()).isGreaterThanOrEqualTo(400));
 
-        // Wallet balance restored
+        // Balance stays at 50 - 20 = 30
         mockMvc.perform(get("/api/wallet")
                         .header("Authorization", "Bearer " + testUserToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(50.00));
+                .andExpect(jsonPath("$.balance").value(30.00));
     }
 
     @Test

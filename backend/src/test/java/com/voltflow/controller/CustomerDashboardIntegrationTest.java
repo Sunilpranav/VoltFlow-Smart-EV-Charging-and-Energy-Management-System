@@ -41,9 +41,9 @@ class CustomerDashboardIntegrationTest {
     }
 
     @Test
-    void getDashboard_unauthenticated_returns403() throws Exception {
+    void getDashboard_unauthenticated_returns401() throws Exception {
         mockMvc.perform(get("/api/customer/dashboard"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
