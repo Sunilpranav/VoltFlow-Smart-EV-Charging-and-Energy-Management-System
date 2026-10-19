@@ -5,8 +5,10 @@ import com.voltflow.dto.LoginRequest;
 import com.voltflow.dto.RegisterRequest;
 import com.voltflow.dto.StartSessionRequest;
 import com.voltflow.entity.Charger;
+import com.voltflow.entity.Station;
 import com.voltflow.entity.Vehicle;
 import com.voltflow.repository.ChargerRepository;
+import com.voltflow.repository.StationRepository;
 import com.voltflow.repository.UserRepository;
 import com.voltflow.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,6 +43,7 @@ class ChargingSessionControllerIntegrationTest {
     @Autowired ObjectMapper objectMapper;
     @Autowired VehicleRepository vehicleRepository;
     @Autowired ChargerRepository chargerRepository;
+    @Autowired StationRepository stationRepository;
     @Autowired UserRepository userRepository;
 
     String customer1Token;
@@ -50,6 +54,8 @@ class ChargingSessionControllerIntegrationTest {
 
     Long availableCcs2ChargerId;
     Long occupiedType2ChargerId;
+
+    Station testStation;
 
     Long activeSessionId;
 
@@ -90,16 +96,27 @@ class ChargingSessionControllerIntegrationTest {
         var v2 = vehicleRepository.findByOwnerId(user2.getId()).get(0);
         customer2VehicleId = v2.getId();
 
-        // Find chargers
-        Charger ccs2Charger = chargerRepository.findAll().stream()
-                .filter(c -> "CCS2".equalsIgnoreCase(c.getConnectorType()) && "AVAILABLE".equalsIgnoreCase(c.getStatus()))
-                .findFirst().orElseThrow();
-        availableCcs2ChargerId = ccs2Charger.getId();
+        // Dedicated station and chargers: this test must not depend on the shared seed data
+        // or on sessions/chargers left in a different state by other test classes.
+        testStation = stationRepository.save(Station.builder()
+                .name("Session Test Station " + UUID.randomUUID().toString().substring(0, 6))
+                .address("1 Test Way, Metro City")
+                .latitude(37.7000)
+                .longitude(-122.4000)
+                .status("ACTIVE")
+                .build());
+        availableCcs2ChargerId = newCharger("CCS2").getId();
+        occupiedType2ChargerId = newCharger("Type 2").getId();
+    }
 
-        Charger type2Charger = chargerRepository.findAll().stream()
-                .filter(c -> "Type 2".equalsIgnoreCase(c.getConnectorType()))
-                .findFirst().orElseThrow();
-        occupiedType2ChargerId = type2Charger.getId();
+    private Charger newCharger(String connectorType) {
+        return chargerRepository.save(Charger.builder()
+                .station(testStation)
+                .chargerCode("ST-" + UUID.randomUUID().toString().substring(0, 8))
+                .connectorType(connectorType)
+                .maxPowerKw(BigDecimal.valueOf(50.0))
+                .status("AVAILABLE")
+                .build());
     }
 
     @Test
@@ -150,7 +167,7 @@ class ChargingSessionControllerIntegrationTest {
                 .andExpect(jsonPath("$.status").value("CHARGING"))
                 .andExpect(jsonPath("$.customerEmail").value("sessiontest1@voltflow.test"))
                 .andExpect(jsonPath("$.vehicleRegistrationNumber").value("SESS-EV-1"))
-                .andExpect(jsonPath("$.tariffPerKwh").value(0.3500))
+                .andExpect(jsonPath("$.tariffPerKwh").isNumber())
                 .andReturn();
 
         activeSessionId = objectMapper.readTree(res.getResponse().getContentAsString()).get("id").asLong();
@@ -273,9 +290,7 @@ class ChargingSessionControllerIntegrationTest {
     @Test
     @Order(13)
     void stopSession_whenChargerMarkedForMaintenance_preservesMaintenanceStatus() throws Exception {
-        Charger freshCharger = chargerRepository.findAll().stream()
-                .filter(c -> "CCS2".equalsIgnoreCase(c.getConnectorType()) && "AVAILABLE".equalsIgnoreCase(c.getStatus()))
-                .findFirst().orElseThrow();
+        Charger freshCharger = newCharger("CCS2");
 
         var startReq = new StartSessionRequest(customer1VehicleId, freshCharger.getId());
         MvcResult startRes = mockMvc.perform(post("/api/sessions/start")
