@@ -41,11 +41,11 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[75vh] px-4 py-8">
-      <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-9 shadow-xl shadow-blue-900/5 space-y-6">
+    <div className="flex items-center justify-center min-h-[75vh] px-4 py-8 animate-fade-in">
+      <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-9 shadow-xl shadow-blue-900/5 space-y-6 animate-scale-in">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white items-center justify-center shadow-md shadow-blue-500/25 mb-2">
+          <div className="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white items-center justify-center shadow-md shadow-blue-500/25 mb-2 hover:scale-105 transition-transform duration-300">
             <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
@@ -65,14 +65,14 @@ export const LoginPage: React.FC = () => {
             <button
               type="button"
               onClick={() => fillCredentials('customer@voltflow.com', 'Password123!')}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 transition text-center shadow-xs"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 transition text-center shadow-xs cursor-pointer hover-lift active:scale-95"
             >
               ⚡ Customer Demo
             </button>
             <button
               type="button"
               onClick={() => fillCredentials('admin@voltflow.com', 'AdminPassword123!')}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-blue-50 text-indigo-700 border border-blue-200 transition text-center shadow-xs"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-blue-50 text-indigo-700 border border-blue-200 transition text-center shadow-xs cursor-pointer hover-lift active:scale-95"
             >
               🛡️ Admin Demo
             </button>
@@ -81,7 +81,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-2.5">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-2.5 animate-scale-in">
             <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -101,7 +101,7 @@ export const LoginPage: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="e.g. driver@voltflow.com"
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm shadow-xs"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-400 transition text-sm shadow-xs"
             />
           </div>
 
@@ -113,7 +113,7 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-[11px] text-blue-600 hover:text-blue-700 font-medium transition"
+                className="text-[11px] text-blue-600 hover:text-blue-700 font-medium transition cursor-pointer"
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -124,14 +124,14 @@ export const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm shadow-xs"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-400 transition text-sm shadow-xs"
             />
           </div>
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-md shadow-blue-500/25 transition-all duration-200 flex items-center justify-center gap-2 text-sm mt-6 active:scale-[0.99] hover:scale-[1.01]"
+            className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold rounded-xl shadow-md shadow-blue-500/25 transition-all duration-200 flex items-center justify-center gap-2 text-sm mt-6 cursor-pointer hover-lift active:scale-95"
           >
             {submitting ? (
               <>
@@ -148,7 +148,7 @@ export const LoginPage: React.FC = () => {
         <div className="pt-4 border-t border-slate-100 text-center">
           <p className="text-xs text-slate-500">
             Need an account?{' '}
-            <Link to="/register" className="text-blue-600 font-bold hover:text-blue-700 hover:underline">
+            <Link to="/register" className="text-blue-600 font-bold hover:text-blue-700 hover:underline transition">
               Create free driver profile
             </Link>
           </p>

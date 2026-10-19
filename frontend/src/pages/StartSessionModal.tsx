@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { vehicleApi, stationApi, sessionApi, ApiError } from '../api/client';
 import type { Vehicle, StationSummary, Charger } from '../types';
+import { ModalWrapper, MotionButton } from '../components/animations';
 
 interface StartSessionModalProps {
   isOpen: boolean;
@@ -90,42 +91,23 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
     };
   }, [selectedStationId, preselectedChargerId]);
 
-  // Escape key handler
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !submitting) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, submitting, onClose]);
+  const currentVehicle = vehicles.find((v) => v.id === selectedVehicleId);
+  const currentCharger = chargers.find((c) => c.id === selectedChargerId);
 
-  if (!isOpen) return null;
-
-  const currentVehicle = vehicles.find((v) => v.id === Number(selectedVehicleId));
-  const currentCharger = chargers.find((c) => c.id === Number(selectedChargerId));
-
-  // Compatibility and Availability validation
+  // Cross-reference connector compatibility
   const isCompatible =
     currentVehicle && currentCharger
-      ? currentVehicle.connectorType.toUpperCase() === currentCharger.connectorType.toUpperCase()
-      : false;
+      ? currentVehicle.connectorType === currentCharger.connectorType
+      : true;
 
-  const isChargerAvailable = currentCharger ? currentCharger.status === 'AVAILABLE' : false;
-
+  const isChargerAvailable = currentCharger?.status === 'AVAILABLE';
   const canStart = Boolean(
-    selectedVehicleId &&
-    selectedChargerId &&
-    isCompatible &&
-    isChargerAvailable &&
-    !submitting
+    selectedVehicleId && selectedChargerId && isCompatible && isChargerAvailable && !submitting
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canStart || !selectedVehicleId || !selectedChargerId || submitting) return;
+    if (!canStart) return;
 
     setSubmitting(true);
     setError(null);
@@ -144,18 +126,18 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="start-session-title"
+    <ModalWrapper
+      isOpen={isOpen}
+      onClose={() => !submitting && onClose()}
+      titleId="start-session-title"
+      maxWidth="max-w-lg"
     >
-      <div className="relative w-full max-w-lg bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-xs">
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-5 h-5 fill-current animate-pulse" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>
             </div>
@@ -180,7 +162,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
 
         {/* Error Alert */}
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 animate-scale-in">
             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -191,11 +173,11 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
         {loading ? (
           <div className="py-12 flex flex-col items-center justify-center gap-3">
             <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
-            <p className="text-xs text-slate-500">Loading EV fleet and available stations...</p>
+            <p className="text-xs text-slate-500 font-mono">Loading EV fleet and available stations...</p>
           </div>
         ) : vehicles.length === 0 ? (
           <div className="py-8 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-200">
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-200 shadow-xs">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
@@ -209,7 +191,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
                 onClose();
                 navigate('/vehicles');
               }}
-              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-sm"
+              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-sm hover-lift active:scale-95 cursor-pointer"
             >
               Add Vehicle to Garage
             </button>
@@ -224,7 +206,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
               <select
                 value={selectedVehicleId}
                 onChange={(e) => setSelectedVehicleId(Number(e.target.value))}
-                className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-xs"
                 required
               >
                 {vehicles.map((v) => (
@@ -243,7 +225,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
               <select
                 value={selectedStationId}
                 onChange={(e) => setSelectedStationId(Number(e.target.value))}
-                className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-xs"
                 required
               >
                 {stations.map((s) => (
@@ -263,7 +245,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
                 id="modal-charger-select"
                 value={selectedChargerId}
                 onChange={(e) => setSelectedChargerId(Number(e.target.value))}
-                className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer"
+                className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer shadow-xs"
                 required
               >
                 {chargers.map((c) => {
@@ -279,7 +261,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
 
             {/* Compatibility Summary Box */}
             {currentVehicle && currentCharger && (
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5 text-xs">
+              <div className="p-4 bg-slate-50/90 rounded-2xl border border-slate-200/90 space-y-2.5 text-xs hover-lift">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Connector Compatibility:</span>
                   {isCompatible ? (
@@ -331,28 +313,21 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
 
             {/* CTA Button */}
             <div className="pt-2">
-              <button
+              <MotionButton
                 type="submit"
                 disabled={!canStart}
-                className={`w-full py-3.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 ${
-                  canStart
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/25 active:scale-[0.99] hover:scale-[1.01] cursor-pointer'
-                    : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                }`}
+                loading={submitting}
+                variant="primary"
+                className="w-full py-3.5 text-xs sm:text-sm font-bold shadow-lg shadow-blue-500/25"
               >
-                {submitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Engaging EVSE Relays...</span>
-                  </>
-                ) : (
-                  <span>⚡ Confirm & Start Charging</span>
-                )}
-              </button>
+                <span>⚡ Confirm & Start Charging</span>
+              </MotionButton>
             </div>
           </form>
         )}
       </div>
-    </div>
+    </ModalWrapper>
   );
 };
+
+export default StartSessionModal;

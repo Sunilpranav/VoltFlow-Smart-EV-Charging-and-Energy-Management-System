@@ -334,8 +334,8 @@ export const AdminSessionsPage: React.FC = () => {
 
       {/* ── Modal: Process Refund ────────────────────────────────────────── */}
       {refundSession && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="max-w-md w-full bg-[#0e1524] border border-[#1e293b] rounded-2xl shadow-2xl p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="max-w-md w-full bg-[#0e1524] border border-[#1e293b] rounded-2xl shadow-2xl p-6 animate-scale-in">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#1e293b]">
               <div>
                 <h3 className="text-base font-bold text-white">Process Admin Refund</h3>

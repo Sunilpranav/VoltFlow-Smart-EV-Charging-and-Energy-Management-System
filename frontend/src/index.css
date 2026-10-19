@@ -66,7 +66,7 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Dynamic Animation Effects ─────────────────────────────────────────────── */
+/* ── Dynamic Animation Effects & Motion Design System ──────────────────────── */
 
 /* 1. Pulse animation for live charging energy flow */
 @keyframes energyPulse {
@@ -76,7 +76,7 @@ body {
     box-shadow: 0 0 20px rgba(37, 99, 235, 0.35);
   }
   50% {
-    opacity: 0.85;
+    opacity: 0.88;
     transform: scale(0.985);
     box-shadow: 0 0 10px rgba(37, 99, 235, 0.15);
   }
@@ -108,7 +108,7 @@ body {
     filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.4));
   }
   50% {
-    filter: drop-shadow(0 0 18px rgba(2, 132, 199, 0.6));
+    filter: drop-shadow(0 0 18px rgba(2, 132, 199, 0.65));
   }
 }
 
@@ -138,6 +138,126 @@ body {
   }
 }
 
+/* 7. Entrances */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 8. Electric Beam / Flow Effect */
+@keyframes electricFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 9. Circular Pulse Ring */
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  70% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 14px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+/* ── Animation Utility Classes ────────────────────────────────────────────── */
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .animate-energy {
   animation: energyPulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -147,9 +267,9 @@ body {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%);
   background-size: 200% 100%;
-  animation: shimmer 2.5s infinite;
+  animation: shimmer 2.2s infinite;
 }
 
 .animate-glow-blue {
@@ -161,7 +281,54 @@ body {
 }
 
 .animate-spin-slow {
-  animation: spinSlow 20s linear infinite;
+  animation: spinSlow 18s linear infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-electric-flow {
+  background-size: 200% 200%;
+  animation: electricFlow 3.5s ease infinite;
+}
+
+/* Stagger delay classes */
+.delay-75 { animation-delay: 75ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-250 { animation-delay: 250ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-350 { animation-delay: 350ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* ── Interactive Hover & Motion Utilities ─────────────────────────────────── */
+
+.hover-lift {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -4px rgba(37, 99, 235, 0.12), 0 6px 12px -2px rgba(15, 23, 42, 0.04);
+}
+
+.hover-glow {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-glow:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 0 18px -2px rgba(59, 130, 246, 0.35);
+}
+
+/* Skeleton Loading Shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite ease-in-out;
 }
 
 /* ── Modern Professional Light Utility Classes ────────────────────────────── */
@@ -195,3 +362,43 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+@keyframes checkmarkDraw {
+  from {
+    stroke-dashoffset: 50;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-checkmark {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: checkmarkDraw 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Accessibility: Reduced Motion Support ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-float,
+  .animate-energy,
+  .animate-glow-blue,
+  .animate-pulse-ring,
+  .animate-electric-flow,
+  .animate-shimmer,
+  .skeleton-shimmer,
+  .animate-spin-slow,
+  .animate-ripple,
+  .animate-draw-checkmark {
+    animation: none !important;
+  }
+}
+

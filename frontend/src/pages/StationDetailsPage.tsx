@@ -5,6 +5,7 @@ import type { Station } from '../types';
 import { useAuth } from '../context/useAuth';
 import { StartSessionModal } from './StartSessionModal';
 import { formatTariffRate, formatPower } from '../utils/currency';
+import { Skeleton, GlowCard, MotionButton } from '../components/animations';
 
 export const StationDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,11 +40,20 @@ export const StationDetailsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-44 bg-white rounded-3xl border border-slate-200" />
+      <div className="space-y-6 animate-fade-in">
+        <div className="h-44 bg-white rounded-3xl border border-slate-200 p-6 space-y-3">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-8 w-72" />
+          <Skeleton className="h-4 w-96" />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-60 bg-white rounded-3xl border border-slate-200" />
+            <div key={i} className="h-64 bg-white rounded-3xl border border-slate-200 p-6 space-y-4">
+              <Skeleton className="h-6 w-28" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-10 w-full rounded-xl" />
+            </div>
           ))}
         </div>
       </div>
@@ -52,12 +62,12 @@ export const StationDetailsPage: React.FC = () => {
 
   if (error || !station) {
     return (
-      <div className="p-8 bg-white border border-slate-200 rounded-3xl text-center space-y-4 max-w-lg mx-auto my-12 shadow-sm">
+      <div className="p-8 bg-white border border-slate-200 rounded-3xl text-center space-y-4 max-w-lg mx-auto my-12 shadow-sm animate-scale-in">
         <h2 className="text-xl font-bold text-slate-900">Hub Not Found</h2>
         <p className="text-xs sm:text-sm text-slate-500">{error || 'Unable to locate this charging location.'}</p>
         <Link
           to="/stations"
-          className="inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md"
+          className="inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md hover-lift"
         >
           ← Back to Charging Network
         </Link>
@@ -71,24 +81,25 @@ export const StationDetailsPage: React.FC = () => {
     : null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in-up">
       {/* Back link */}
       <div>
         <Link
           to="/stations"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition group"
         >
-          <span>← Back to Hub Network</span>
+          <span className="group-hover:-translate-x-1 transition-transform">←</span>
+          <span>Back to Hub Network</span>
         </Link>
       </div>
 
       {/* ── STATION BANNER ─────────────────────────────────────────────────── */}
-      <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm relative overflow-hidden">
+      <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs relative overflow-hidden hover-lift group">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2">
             <div className="flex items-center gap-2.5">
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
+                className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shadow-xs ${
                   station.status === 'ACTIVE'
                     ? 'bg-blue-50 text-blue-700 border-blue-200'
                     : 'bg-amber-50 text-amber-700 border-amber-200'
@@ -108,7 +119,7 @@ export const StationDetailsPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-right min-w-[140px]">
+          <div className="bg-slate-50/80 border border-slate-200 rounded-2xl p-4 text-right min-w-[140px] shadow-xs">
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Real-time Stalls</span>
             <span className="text-2xl font-black text-slate-900 font-mono tabular-nums">
               {station.availableChargers} / {station.totalChargers}
@@ -127,14 +138,15 @@ export const StationDetailsPage: React.FC = () => {
                 href={osmUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 font-sans font-semibold"
+                className="text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 font-sans font-semibold transition-colors"
+                title="Open location in OpenStreetMap (free map)"
               >
                 <span>Open in OpenStreetMap</span>
                 <span>↗</span>
               </a>
             )}
           </div>
-          <div className="text-blue-700 font-semibold text-[11px] flex items-center gap-1.5">
+          <div className="text-blue-700 font-semibold text-[11px] flex items-center gap-1.5 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200/60">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
             <span>Simulated Telemetry Grid Active</span>
           </div>
@@ -147,7 +159,7 @@ export const StationDetailsPage: React.FC = () => {
           <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
             <span>Available EVSE Charging Hardware</span>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-              {station.chargers?.length || 0}
+              {station.chargers?.length || 0} Stalls
             </span>
           </h2>
         </div>
@@ -158,22 +170,24 @@ export const StationDetailsPage: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {station.chargers.map((c) => {
+            {station.chargers.map((c, idx) => {
               const isAvailable = c.status === 'AVAILABLE';
               const isOccupied = c.status === 'OCCUPIED';
 
               return (
-                <div
+                <GlowCard
                   key={c.id}
-                  className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-xs hover:border-blue-400 transition-all duration-300 hover:shadow-md hover:scale-[1.01] flex flex-col justify-between group"
+                  glowColor={isAvailable ? 'rgba(59, 130, 246, 0.3)' : 'rgba(245, 158, 11, 0.2)'}
+                  style={{ animationDelay: `${idx * 80}ms` }}
+                  className="bg-white border border-slate-200/90 rounded-3xl p-6 space-y-4 shadow-xs flex flex-col justify-between group animate-fade-in-up"
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold text-slate-800 bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">
+                      <span className="font-mono text-xs font-bold text-slate-800 bg-slate-100 px-3 py-1 rounded-xl border border-slate-200 shadow-xs">
                         {c.chargerCode}
                       </span>
                       <span
-                        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border ${
+                        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border shadow-xs ${
                           isAvailable
                             ? 'bg-blue-50 text-blue-700 border-blue-200'
                             : isOccupied
@@ -213,8 +227,9 @@ export const StationDetailsPage: React.FC = () => {
                   </div>
 
                   <div className="pt-3 border-t border-slate-100">
-                    <button
+                    <MotionButton
                       disabled={!isAvailable}
+                      variant={isAvailable ? 'primary' : 'ghost'}
                       onClick={() => {
                         if (!isAuthenticated) {
                           navigate('/login');
@@ -223,22 +238,16 @@ export const StationDetailsPage: React.FC = () => {
                         setSelectedChargerId(c.id);
                         setIsModalOpen(true);
                       }}
-                      className={`w-full py-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                        isAvailable
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 cursor-pointer active:scale-[0.99] hover:scale-[1.01]'
-                          : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                      }`}
+                      className="w-full py-3 text-xs font-bold"
                     >
                       {isAvailable ? (
-                        <>
-                          <span>⚡ Plug In & Charge</span>
-                        </>
+                        <span>⚡ Plug In & Charge</span>
                       ) : (
                         <span>Stall Busy / In Use</span>
                       )}
-                    </button>
+                    </MotionButton>
                   </div>
-                </div>
+                </GlowCard>
               );
             })}
           </div>

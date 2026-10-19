@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { sessionApi, walletApi, ApiError } from '../api/client';
 import type { SessionSummary, Wallet } from '../types';
 import { formatCurrency, formatTariffRate, formatEnergy } from '../utils/currency';
+import { MotionButton } from '../components/animations';
 
 export const SessionSummaryPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -66,16 +67,19 @@ export const SessionSummaryPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[65vh] flex flex-col items-center justify-center gap-3">
-        <div className="w-10 h-10 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-500 text-sm font-medium">Generating verified billing summary & invoice...</p>
+      <div className="min-h-[65vh] flex flex-col items-center justify-center gap-4 animate-fade-in">
+        <div className="relative">
+          <div className="w-12 h-12 border-3 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
+          <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping" />
+        </div>
+        <p className="text-slate-500 text-sm font-medium animate-pulse">Generating verified billing summary & invoice...</p>
       </div>
     );
   }
 
   if (error || !summary) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-16 text-center space-y-5">
+      <div className="max-w-xl mx-auto px-4 py-16 text-center space-y-5 animate-scale-in">
         <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-200 shadow-sm">
           <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -87,7 +91,7 @@ export const SessionSummaryPage: React.FC = () => {
         </div>
         <Link
           to="/sessions"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-sm hover-lift active:scale-95"
         >
           &larr; Return to All Sessions
         </Link>
@@ -96,7 +100,7 @@ export const SessionSummaryPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6 animate-fade-in-up">
       {/* Top Banner / Breadcrumb & Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <Link
@@ -115,7 +119,7 @@ export const SessionSummaryPage: React.FC = () => {
           <span
             className={`text-[11px] font-mono font-bold px-3 py-1 rounded-full border ${
               summary.paymentStatus === 'PAID'
-                ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                ? 'text-emerald-700 bg-emerald-50 border-emerald-200 shadow-xs'
                 : summary.paymentStatus === 'REFUNDED'
                 ? 'text-purple-700 bg-purple-50 border-purple-200'
                 : 'text-amber-700 bg-amber-50 border-amber-200'
@@ -128,19 +132,19 @@ export const SessionSummaryPage: React.FC = () => {
 
       {paymentMessage && (
         <div
-          className={`p-4 rounded-2xl text-xs flex items-center justify-between shadow-xs ${
+          className={`p-4 rounded-2xl text-xs flex items-center justify-between shadow-xs animate-scale-in ${
             paymentMessage.type === 'success'
               ? 'bg-blue-50 border border-blue-200 text-blue-800'
               : 'bg-rose-50 border border-rose-200 text-rose-700'
           }`}
         >
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-current" />
+            <span className="w-2 h-2 rounded-full bg-current animate-ping" />
             <span>{paymentMessage.text}</span>
           </div>
           <button
             onClick={() => setPaymentMessage(null)}
-            className="text-xs font-bold hover:underline ml-3 opacity-80 hover:opacity-100"
+            className="text-xs font-bold hover:underline ml-3 opacity-80 hover:opacity-100 cursor-pointer"
           >
             Dismiss
           </button>
@@ -148,7 +152,7 @@ export const SessionSummaryPage: React.FC = () => {
       )}
 
       {/* Invoice Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs relative">
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs relative transition hover:shadow-md">
         {/* Invoice Header */}
         <div className="p-6 sm:p-8 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
@@ -267,21 +271,28 @@ export const SessionSummaryPage: React.FC = () => {
           </div>
 
           {/* Settlement / Payment Action Card */}
-          <div className="p-5 rounded-2xl bg-blue-50/70 border border-blue-200 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-5 rounded-2xl bg-blue-50/70 border border-blue-200 space-y-4 relative overflow-hidden">
+            {summary.paymentStatus === 'PAID' && (
+              <div className="absolute -right-4 -bottom-4 opacity-10 pointer-events-none select-none">
+                <svg className="w-32 h-32 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+            )}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
               <div>
                 <span className="text-xs uppercase font-bold text-blue-900 tracking-wider">Payment Settlement Status</span>
                 <div className="flex items-center gap-2.5 mt-1.5">
                   <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
                       summary.paymentStatus === 'PAID'
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs'
                         : summary.paymentStatus === 'REFUNDED'
                         ? 'bg-purple-100 text-purple-800 border border-purple-300'
                         : 'bg-amber-100 text-amber-800 border border-amber-300'
                     }`}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                    <span className={`w-1.5 h-1.5 rounded-full ${summary.paymentStatus === 'PAID' ? 'bg-emerald-600' : 'bg-current'}`} />
                     {summary.paymentStatus === 'PAID'
                       ? 'Settled (Paid)'
                       : summary.paymentStatus === 'REFUNDED'
@@ -306,31 +317,24 @@ export const SessionSummaryPage: React.FC = () => {
                         </span>
                         <Link
                           to="/wallet"
-                          className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition"
+                          className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition hover-lift active:scale-95"
                         >
                           Top Up Wallet &rarr;
                         </Link>
                       </div>
                     ) : (
-                      <button
+                      <MotionButton
                         onClick={handlePay}
                         disabled={paying}
-                        className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs shadow-md shadow-blue-500/25 transition flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                        loading={paying}
+                        variant="primary"
+                        className="px-5 py-2.5 text-xs font-bold shadow-md shadow-blue-500/25"
                       >
-                        {paying ? (
-                          <>
-                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            <span>Settling Transaction...</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg className="w-4 h-4 text-white fill-none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            <span>Settle ${summary.totalCost.toFixed(2)} with Wallet</span>
-                          </>
-                        )}
-                      </button>
+                        <svg className="w-4 h-4 text-white fill-none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span>Settle ${summary.totalCost.toFixed(2)} with Wallet</span>
+                      </MotionButton>
                     )}
                   </>
                 )}
@@ -367,15 +371,16 @@ export const SessionSummaryPage: React.FC = () => {
             >
               Session History
             </Link>
-            <button
+            <MotionButton
               onClick={() => window.print()}
-              className="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 text-xs font-bold transition flex items-center gap-1.5 border border-slate-300 shadow-xs cursor-pointer hover:scale-105 active:scale-95"
+              variant="outline"
+              className="px-5 py-2.5 text-xs font-bold"
             >
               <svg className="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
               <span>Print Invoice Receipt</span>
-            </button>
+            </MotionButton>
           </div>
         </div>
       </div>

@@ -4,8 +4,8 @@ import { Navbar } from './Navbar';
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-800 selection:bg-blue-600 selection:text-white font-sans antialiased relative overflow-x-hidden">
-      {/* Background ambient light mesh */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[480px] bg-gradient-to-b from-blue-100/70 via-sky-50/40 to-transparent blur-3xl -z-10 pointer-events-none" />
+      {/* Background ambient light mesh with gentle energy breathing */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[520px] bg-gradient-to-b from-blue-200/60 via-sky-100/40 to-transparent blur-3xl -z-10 pointer-events-none animate-energy opacity-80" />
 
       {/* Accessibility Skip Link */}
       <a
@@ -17,7 +17,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
       <Navbar />
 
-      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 outline-none">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 outline-none animate-fade-in">
         {children}
       </main>
 

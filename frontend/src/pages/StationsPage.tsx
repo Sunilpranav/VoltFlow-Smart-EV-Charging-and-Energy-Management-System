@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { stationApi } from '../api/client';
 import type { StationSummary } from '../types';
+import { AnimatedProgressBar, Skeleton, GlowCard } from '../components/animations';
 
 export const StationsPage: React.FC = () => {
   const [stations, setStations] = useState<StationSummary[]>([]);
@@ -30,7 +31,28 @@ export const StationsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchStations();
+    let isMounted = true;
+    stationApi.list()
+      .then((data) => {
+        if (isMounted) {
+          setStations(data);
+          setError(null);
+        }
+      })
+      .catch((err: unknown) => {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch charging hubs');
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const filteredStations = useMemo(() => {
@@ -54,11 +76,11 @@ export const StationsPage: React.FC = () => {
   }, [filteredStations, sortBy]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in-up">
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-6">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">
             <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
             <span>Live Grid Status • High-Speed Hubs</span>
           </div>
@@ -78,7 +100,7 @@ export const StationsPage: React.FC = () => {
       </div>
 
       {/* ── FILTER & CONTROLS TOOLBAR ───────────────────────────────────────── */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs">
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xs hover-lift">
         {/* Search */}
         <div className="relative w-full md:max-w-md">
           <label htmlFor="station-search" className="sr-only">
@@ -98,7 +120,7 @@ export const StationsPage: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search hub by name or address..."
-            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs sm:text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs sm:text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-xs"
           />
         </div>
 
@@ -114,7 +136,7 @@ export const StationsPage: React.FC = () => {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               aria-label="Filter by hub operational status"
-              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer"
+              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer shadow-xs"
             >
               <option value="ALL">All Hubs</option>
               <option value="ACTIVE">Operational Only</option>
@@ -132,7 +154,7 @@ export const StationsPage: React.FC = () => {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'default' | 'availability' | 'name')}
               aria-label="Sort charging hubs"
-              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer"
+              className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition cursor-pointer shadow-xs"
             >
               <option value="default">Default</option>
               <option value="availability">Most Stalls Free</option>
@@ -144,29 +166,42 @@ export const StationsPage: React.FC = () => {
 
       {/* Error Notice */}
       {error && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-center justify-between animate-scale-in">
           <span>{error}</span>
           <button
             onClick={() => {
-              setSearchTerm('');
-              setStatusFilter('ALL');
+              fetchStations();
             }}
-            className="text-xs underline hover:text-rose-800 ml-3 font-semibold"
+            className="text-xs underline hover:text-rose-800 ml-3 font-semibold cursor-pointer"
           >
             Retry
           </button>
         </div>
       )}
 
-      {/* ── STATIONS GRID ─────────────────────────────────────────────────── */}
+      {/* ── STATIONS GRID WITH SKELETON LOADERS & ANIMATED ENTRANCES ────────── */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-60 bg-white rounded-3xl border border-slate-200" />
+            <div key={i} className="h-64 bg-white rounded-3xl border border-slate-200/90 p-6 space-y-4 shadow-xs">
+              <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-5 w-40" />
+                </div>
+                <Skeleton className="h-5 w-20 rounded-full" />
+              </div>
+              <Skeleton className="h-4 w-3/4" />
+              <div className="p-4 bg-slate-50 rounded-2xl space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-2 w-full rounded-full" />
+              </div>
+              <Skeleton className="h-10 w-full rounded-xl" />
+            </div>
           ))}
         </div>
       ) : sortedStations.length === 0 ? (
-        <div className="p-12 bg-white border border-dashed border-slate-200 rounded-3xl text-center space-y-3">
+        <div className="p-12 bg-white border border-dashed border-slate-200 rounded-3xl text-center space-y-3 animate-scale-in">
           <p className="text-xs sm:text-sm text-slate-500">No charging hubs match the specified criteria.</p>
           <button
             onClick={() => {
@@ -174,23 +209,26 @@ export const StationsPage: React.FC = () => {
               setStatusFilter('ALL');
               setSortBy('default');
             }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer hover-lift"
           >
             Reset Filters
           </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedStations.map((s) => {
+          {sortedStations.map((s, idx) => {
             const hasCoords = typeof s.latitude === 'number' && typeof s.longitude === 'number';
             const osmUrl = hasCoords
               ? `https://www.openstreetmap.org/?mlat=${s.latitude}&mlon=${s.longitude}#map=16/${s.latitude}/${s.longitude}`
               : null;
+            const freePercent = s.totalChargers > 0 ? (s.availableChargers / s.totalChargers) * 100 : 0;
 
             return (
-              <div
+              <GlowCard
                 key={s.id}
-                className="bg-white border border-slate-200 hover:border-blue-400 rounded-3xl p-6 transition-all duration-300 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:shadow-blue-500/5 hover:scale-[1.01] group"
+                glowColor="rgba(59, 130, 246, 0.25)"
+                style={{ animationDelay: `${Math.min(idx * 60, 360)}ms` }}
+                className="bg-white border border-slate-200/90 rounded-3xl p-6 flex flex-col justify-between space-y-5 shadow-xs group animate-fade-in-up"
               >
                 <div className="space-y-4">
                   {/* Header & Status */}
@@ -204,13 +242,18 @@ export const StationsPage: React.FC = () => {
                       </h3>
                     </div>
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
+                      className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shadow-xs flex items-center gap-1.5 ${
                         s.status === 'ACTIVE'
                           ? 'bg-blue-50 text-blue-700 border-blue-200'
                           : 'bg-amber-50 text-amber-700 border-amber-200'
                       }`}
                     >
-                      {s.status}
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          s.status === 'ACTIVE' ? 'bg-blue-600 animate-pulse' : 'bg-amber-500'
+                        }`}
+                      />
+                      <span>{s.status}</span>
                     </span>
                   </div>
 
@@ -224,22 +267,25 @@ export const StationsPage: React.FC = () => {
                   </p>
 
                   {/* Capacity & Telemetry */}
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2">
+                  <div className="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/80 space-y-2.5">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-slate-600 font-medium">Stall Availability</span>
-                      <span className="font-mono font-bold text-blue-700">
-                        {s.availableChargers} / {s.totalChargers} Free
+                      <span className="font-mono font-bold text-blue-700 flex items-center gap-1">
+                        {s.availableChargers > 0 && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                        )}
+                        <span>{s.availableChargers} / {s.totalChargers} Free</span>
                       </span>
                     </div>
-                    {/* Progress bar */}
-                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden border border-slate-200 p-0.5">
-                      <div
-                        className="bg-gradient-to-r from-blue-600 via-sky-500 to-blue-400 h-full rounded-full transition-all duration-300"
-                        style={{
-                          width: `${s.totalChargers > 0 ? (s.availableChargers / s.totalChargers) * 100 : 0}%`,
-                        }}
-                      />
-                    </div>
+
+                    {/* Animated Progress Bar */}
+                    <AnimatedProgressBar
+                      value={freePercent}
+                      height="h-2"
+                      color={freePercent > 50 ? 'emerald' : freePercent > 0 ? 'gradient' : 'amber'}
+                      showShimmer={freePercent > 0}
+                    />
+
                     <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-1">
                       <span>GPS: {hasCoords ? `${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}` : 'N/A'}</span>
                       {osmUrl && (
@@ -247,7 +293,7 @@ export const StationsPage: React.FC = () => {
                           href={osmUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 font-semibold"
+                          className="text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 font-semibold transition-colors"
                           title="Open location in OpenStreetMap (free map)"
                         >
                           <span>Open Map</span>
@@ -262,13 +308,13 @@ export const StationsPage: React.FC = () => {
                 <div className="pt-2">
                   <Link
                     to={`/stations/${s.id}`}
-                    className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.99] hover:scale-[1.01]"
+                    className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.98] hover:scale-[1.02] hover-lift"
                   >
                     <span>Inspect Chargers & Tariffs</span>
-                    <span>→</span>
+                    <span className="group-hover:translate-x-1 transition-transform">→</span>
                   </Link>
                 </div>
-              </div>
+              </GlowCard>
             );
           })}
         </div>

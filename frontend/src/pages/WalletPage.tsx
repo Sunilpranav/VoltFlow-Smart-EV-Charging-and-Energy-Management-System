@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { walletApi, planApi, ApiError } from '../api/client';
 import type { Wallet, WalletTransaction, PrepaidPlan, CustomerPlan } from '../types';
+import { CountUp, ModalWrapper, GlowCard, MotionButton } from '../components/animations';
 
 export const WalletPage: React.FC = () => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
@@ -76,18 +77,6 @@ export const WalletPage: React.FC = () => {
     };
   }, []);
 
-  // Escape key handler for TopUp modal
-  useEffect(() => {
-    if (!showTopUpModal) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !topUpProcessing) {
-        setShowTopUpModal(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showTopUpModal, topUpProcessing]);
-
   const handleSimulateTopUp = async (action: 'SUCCEED' | 'FAIL' | 'CANCEL') => {
     const amount = customAmount ? parseFloat(customAmount) : topUpAmount;
     if (isNaN(amount) || amount <= 0) {
@@ -148,9 +137,9 @@ export const WalletPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fade-in-up">
       {/* Sandbox Notice Banner */}
-      <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+      <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs hover-lift">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,40 +158,43 @@ export const WalletPage: React.FC = () => {
         </div>
         <button
           onClick={() => setShowTopUpModal(true)}
-          className="self-start sm:self-auto px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition shrink-0 shadow-sm cursor-pointer hover:scale-105 active:scale-95"
+          className="self-start sm:self-auto px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition shrink-0 shadow-sm cursor-pointer hover:scale-105 active:scale-95 hover-lift"
         >
           ⚡ Top Up Demo Funds
         </button>
       </div>
 
-      {/* Global Alerts */}
+      {/* Global Alerts with Scale Animation */}
       {successMessage && (
-        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center justify-between shadow-xs">
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center justify-between shadow-xs animate-scale-in">
           <div className="flex items-center gap-2.5">
             <svg className="w-4 h-4 shrink-0 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             <span>{successMessage}</span>
           </div>
-          <button onClick={() => setSuccessMessage(null)} className="text-emerald-700 hover:text-emerald-900 p-1">&times;</button>
+          <button onClick={() => setSuccessMessage(null)} className="text-emerald-700 hover:text-emerald-900 p-1 cursor-pointer">&times;</button>
         </div>
       )}
 
       {error && (
-        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-center justify-between shadow-xs">
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-center justify-between shadow-xs animate-scale-in">
           <div className="flex items-center gap-2.5">
             <svg className="w-4 h-4 shrink-0 fill-current" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
             <span>{error}</span>
           </div>
-          <button onClick={() => setError(null)} className="text-rose-700 hover:text-rose-900 p-1">&times;</button>
+          <button onClick={() => setError(null)} className="text-rose-700 hover:text-rose-900 p-1 cursor-pointer">&times;</button>
         </div>
       )}
 
-      {/* Wallet Balance Hero Card */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-blue-600/15 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Wallet Balance Hero Card with 3D GlowCard & Tasteful CountUp Animation */}
+      <GlowCard
+        glowColor="rgba(59, 130, 246, 0.45)"
+        className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 text-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-blue-600/15 relative overflow-hidden group"
+      >
+        <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none animate-pulse-ring" />
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2.5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-white border border-white/20">
@@ -211,7 +203,7 @@ export const WalletPage: React.FC = () => {
             </div>
             <div className="flex items-baseline gap-3">
               <span className="text-4xl sm:text-5xl font-black font-mono tabular-nums text-white tracking-tight">
-                ${wallet ? wallet.balance.toFixed(2) : '0.00'}
+                <CountUp value={wallet?.balance ?? 0} decimals={2} prefix="$" />
               </span>
               <span className="text-sm font-mono text-blue-200 uppercase tracking-wider font-semibold">
                 {wallet?.currency || 'USD'}
@@ -224,27 +216,29 @@ export const WalletPage: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <button
+            <MotionButton
               onClick={() => setShowTopUpModal(true)}
-              className="px-6 py-3 rounded-xl bg-white hover:bg-blue-50 text-blue-900 font-bold text-xs shadow-lg shadow-blue-900/20 transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
+              variant="secondary"
+              className="px-6 py-3 text-xs font-bold shadow-lg shadow-blue-900/20"
             >
               <svg className="w-4 h-4 fill-current text-blue-600" viewBox="0 0 24 24">
                 <path d="M12 4v16m8-8H4" />
               </svg>
               <span>Top Up Wallet (Demo)</span>
-            </button>
-            <button
+            </MotionButton>
+            <MotionButton
               onClick={() => setActiveTab('plans')}
-              className="px-4 py-3 rounded-xl bg-blue-800/80 hover:bg-blue-800 text-white font-semibold text-xs border border-blue-400/40 transition flex items-center gap-2 cursor-pointer"
+              variant="outline"
+              className="px-4 py-3 text-white border-blue-400/40 bg-blue-800/60 hover:bg-blue-800"
             >
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
               <span>Prepaid Energy Plans</span>
-            </button>
+            </MotionButton>
           </div>
         </div>
-      </div>
+      </GlowCard>
 
       {/* Tabs Navigation */}
       <div className="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
@@ -282,7 +276,7 @@ export const WalletPage: React.FC = () => {
 
       {/* Tab 1: Transaction Ledger */}
       {activeTab === 'transactions' && (
-        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
+        <div className="bg-white border border-slate-200/90 rounded-3xl overflow-hidden shadow-xs animate-fade-in">
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center gap-3">
               <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -301,7 +295,7 @@ export const WalletPage: React.FC = () => {
               </p>
               <button
                 onClick={() => setShowTopUpModal(true)}
-                className="mt-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer shadow-sm"
+                className="mt-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer shadow-sm hover-lift"
               >
                 Top Up $50 (Sandbox)
               </button>
@@ -322,15 +316,19 @@ export const WalletPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-mono">
-                  {transactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-blue-50/30 transition">
+                  {transactions.map((tx, idx) => (
+                    <tr
+                      key={tx.id}
+                      style={{ animationDelay: `${Math.min(idx * 40, 300)}ms` }}
+                      className="hover:bg-blue-50/40 transition-colors animate-fade-in"
+                    >
                       <td className="py-3.5 px-4 text-slate-900 font-bold tabular-nums">#{tx.id}</td>
                       <td className="py-3.5 px-4 text-slate-600 text-[11px] font-sans">
                         {new Date(tx.createdAt).toLocaleDateString()} • {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </td>
                       <td className="py-3.5 px-4">
                         <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs ${
                             tx.transactionType === 'CREDIT'
                               ? 'bg-blue-50 text-blue-700 border border-blue-200'
                               : tx.transactionType === 'DEBIT'
@@ -369,19 +367,21 @@ export const WalletPage: React.FC = () => {
 
       {/* Tab 2: Prepaid Energy Plans */}
       {activeTab === 'plans' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+          {plans.map((plan, idx) => {
             const hasSufficient = wallet ? wallet.balance >= plan.price : false;
             const isPurchasing = purchasingPlanId === plan.id;
 
             return (
-              <div
+              <GlowCard
                 key={plan.id}
-                className="bg-white border border-slate-200 hover:border-blue-400 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xs hover:shadow-md transition-all duration-300 hover:scale-[1.01] group"
+                glowColor="rgba(59, 130, 246, 0.25)"
+                style={{ animationDelay: `${idx * 80}ms` }}
+                className="bg-white border border-slate-200/90 rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-xs group animate-fade-in-up"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] uppercase font-mono px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-bold">
+                    <span className="text-[10px] uppercase font-mono px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-bold shadow-xs">
                       {plan.validityDays} Days Validity
                     </span>
                     <span className="text-xs font-mono text-slate-400 font-semibold">USD</span>
@@ -415,21 +415,14 @@ export const WalletPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-2 pt-2">
-                  <button
+                  <MotionButton
                     onClick={() => handlePurchasePlan(plan)}
                     disabled={isPurchasing}
-                    className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
-                      hasSufficient
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
-                    }`}
+                    loading={isPurchasing}
+                    variant={hasSufficient ? 'primary' : 'outline'}
+                    className="w-full py-2.5 text-xs font-bold"
                   >
-                    {isPurchasing ? (
-                      <>
-                        <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Processing Purchase...</span>
-                      </>
-                    ) : hasSufficient ? (
+                    {hasSufficient ? (
                       <>
                         <span>Purchase Package</span>
                         <span className="font-mono text-[11px] font-bold tabular-nums">(${plan.price.toFixed(2)})</span>
@@ -437,7 +430,7 @@ export const WalletPage: React.FC = () => {
                     ) : (
                       <span>Top Up to Purchase (${plan.price.toFixed(2)})</span>
                     )}
-                  </button>
+                  </MotionButton>
 
                   {!hasSufficient && (
                     <p className="text-[11px] text-center text-rose-600 font-mono">
@@ -445,7 +438,7 @@ export const WalletPage: React.FC = () => {
                     </p>
                   )}
                 </div>
-              </div>
+              </GlowCard>
             );
           })}
         </div>
@@ -453,7 +446,7 @@ export const WalletPage: React.FC = () => {
 
       {/* Tab 3: My Purchased Plans */}
       {activeTab === 'my-plans' && (
-        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
+        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs animate-fade-in">
           {myPlans.length === 0 ? (
             <div className="py-16 text-center space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-200">
@@ -467,7 +460,7 @@ export const WalletPage: React.FC = () => {
               </p>
               <button
                 onClick={() => setActiveTab('plans')}
-                className="mt-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer shadow-sm"
+                className="mt-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition cursor-pointer shadow-sm hover-lift"
               >
                 Browse Plans
               </button>
@@ -477,11 +470,11 @@ export const WalletPage: React.FC = () => {
               {myPlans.map((cp) => (
                 <div
                   key={cp.id}
-                  className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs"
+                  className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4 shadow-xs hover-lift"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-900">{cp.planName}</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">
                       {cp.status}
                     </span>
                   </div>
@@ -513,122 +506,120 @@ export const WalletPage: React.FC = () => {
         </div>
       )}
 
-      {/* Top Up Modal */}
-      {showTopUpModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="topup-modal-title"
-        >
-          <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200">
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 4v16m8-8H4" />
-                  </svg>
-                </div>
-                <h3 id="topup-modal-title" className="text-base font-bold text-slate-900">Add Funds (Demo Sandbox)</h3>
-              </div>
-              <button
-                onClick={() => setShowTopUpModal(false)}
-                disabled={topUpProcessing}
-                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg cursor-pointer"
-                aria-label="Close dialog"
-              >
-                &times;
-              </button>
-            </div>
-
-            {topUpError && (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      {/* Top Up Modal with ModalWrapper */}
+      <ModalWrapper
+        isOpen={showTopUpModal}
+        onClose={() => !topUpProcessing && setShowTopUpModal(false)}
+        titleId="topup-modal-title"
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-xs">
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 4v16m8-8H4" />
                 </svg>
-                <span>{topUpError}</span>
               </div>
-            )}
+              <h3 id="topup-modal-title" className="text-base font-bold text-slate-900">Add Funds (Demo Sandbox)</h3>
+            </div>
+            <button
+              onClick={() => setShowTopUpModal(false)}
+              disabled={topUpProcessing}
+              className="text-slate-400 hover:text-slate-700 p-1 rounded-lg cursor-pointer transition-colors"
+              aria-label="Close dialog"
+            >
+              &times;
+            </button>
+          </div>
 
-            {/* Quick Amount Chips */}
-            <div className="space-y-2">
-              <label className="text-xs text-slate-700 font-semibold">Select Top-Up Preset</label>
-              <div className="grid grid-cols-4 gap-2">
-                {[10, 25, 50, 100].map((amt) => (
-                  <button
-                    key={amt}
-                    type="button"
-                    onClick={() => {
-                      setTopUpAmount(amt);
-                      setCustomAmount('');
-                    }}
-                    className={`py-2 rounded-xl text-xs font-mono font-bold transition cursor-pointer ${
-                      topUpAmount === amt && !customAmount
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
-                    }`}
-                  >
-                    ${amt}
-                  </button>
-                ))}
-              </div>
+          {topUpError && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 animate-scale-in">
+              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{topUpError}</span>
+            </div>
+          )}
 
-              <div className="pt-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Or enter custom amount ($)"
-                  value={customAmount}
-                  onChange={(e) => setCustomAmount(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
-                />
-              </div>
+          {/* Quick Amount Chips */}
+          <div className="space-y-2">
+            <label className="text-xs text-slate-700 font-semibold">Select Top-Up Preset</label>
+            <div className="grid grid-cols-4 gap-2">
+              {[10, 25, 50, 100].map((amt) => (
+                <button
+                  key={amt}
+                  type="button"
+                  onClick={() => {
+                    setTopUpAmount(amt);
+                    setCustomAmount('');
+                  }}
+                  className={`py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+                    topUpAmount === amt && !customAmount
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                  }`}
+                >
+                  ${amt}
+                </button>
+              ))}
             </div>
 
-            {/* Simulation Action Triggers */}
-            <div className="space-y-2 pt-2">
-              <span className="text-[11px] text-slate-700 uppercase font-bold tracking-wider">
-                Simulate Payment Outcome:
-              </span>
-              <div className="grid grid-cols-1 gap-2">
+            <div className="pt-2">
+              <input
+                type="number"
+                step="0.01"
+                placeholder="Or enter custom amount ($)"
+                value={customAmount}
+                onChange={(e) => setCustomAmount(e.target.value)}
+                className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-xs"
+              />
+            </div>
+          </div>
+
+          {/* Simulation Action Triggers */}
+          <div className="space-y-2 pt-2">
+            <span className="text-[11px] text-slate-700 uppercase font-bold tracking-wider">
+              Simulate Payment Outcome:
+            </span>
+            <div className="grid grid-cols-1 gap-2">
+              <button
+                type="button"
+                onClick={() => handleSimulateTopUp('SUCCEED')}
+                disabled={topUpProcessing}
+                className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer hover-lift active:scale-95"
+              >
+                {topUpProcessing ? (
+                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>✓ Simulate Success (Add ${customAmount || topUpAmount})</span>
+                  </>
+                )}
+              </button>
+
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => handleSimulateTopUp('SUCCEED')}
+                  onClick={() => handleSimulateTopUp('FAIL')}
                   disabled={topUpProcessing}
-                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 cursor-pointer"
+                  className="py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition cursor-pointer active:scale-95"
                 >
-                  {topUpProcessing ? (
-                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      <span>✓ Simulate Success (Add ${customAmount || topUpAmount})</span>
-                    </>
-                  )}
+                  Simulate Card Failure
                 </button>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleSimulateTopUp('FAIL')}
-                    disabled={topUpProcessing}
-                    className="py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition cursor-pointer"
-                  >
-                    Simulate Card Failure
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSimulateTopUp('CANCEL')}
-                    disabled={topUpProcessing}
-                    className="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition cursor-pointer"
-                  >
-                    Simulate Cancel
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => handleSimulateTopUp('CANCEL')}
+                  disabled={topUpProcessing}
+                  className="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition cursor-pointer active:scale-95"
+                >
+                  Simulate Cancel
+                </button>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </ModalWrapper>
     </div>
   );
 };

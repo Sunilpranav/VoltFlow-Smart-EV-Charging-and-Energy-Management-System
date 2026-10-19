@@ -32,14 +32,14 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/85 border-b border-slate-200/90 shadow-xs transition-all">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/90 border-b border-slate-200/90 shadow-xs transition-all animate-fade-in-down">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 flex items-center justify-center shadow-md shadow-blue-500/25 group-hover:scale-105 group-hover:shadow-blue-500/40 transition-all duration-300">
-                <svg className="w-5 h-5 text-white fill-current drop-shadow-xs" viewBox="0 0 24 24">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 flex items-center justify-center shadow-md shadow-blue-500/25 group-hover:scale-110 group-hover:shadow-blue-500/40 group-hover:rotate-3 transition-all duration-300">
+                <svg className="w-5 h-5 text-white fill-current drop-shadow-xs transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24">
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
               </div>
@@ -58,10 +58,10 @@ export const Navbar: React.FC = () => {
           <nav className="hidden md:flex items-center gap-1.5">
             <Link
               to="/stations"
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 relative ${
                 isActive('/stations')
                   ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 hover:translate-y-[-1px]'
               }`}
             >
               Charging Hubs
@@ -74,7 +74,7 @@ export const Navbar: React.FC = () => {
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isActive('/dashboard')
                       ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 hover:translate-y-[-1px]'
                   }`}
                 >
                   Dashboard
@@ -84,7 +84,7 @@ export const Navbar: React.FC = () => {
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isActive('/vehicles')
                       ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 hover:translate-y-[-1px]'
                   }`}
                 >
                   My Garage
@@ -94,7 +94,7 @@ export const Navbar: React.FC = () => {
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isActive('/sessions')
                       ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 hover:translate-y-[-1px]'
                   }`}
                 >
                   Sessions
@@ -104,7 +104,7 @@ export const Navbar: React.FC = () => {
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 ${
                     isActive('/wallet')
                       ? 'bg-blue-50 text-blue-700 border border-blue-200/80 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 hover:translate-y-[-1px]'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,8 +117,8 @@ export const Navbar: React.FC = () => {
                     to="/admin"
                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                       location.pathname.startsWith('/admin')
-                        ? 'bg-blue-100/70 text-blue-800 border border-blue-300 shadow-xs'
-                        : 'text-blue-700 hover:text-blue-900 hover:bg-blue-50 border border-blue-200'
+                        ? 'bg-blue-100/80 text-blue-800 border border-blue-300 shadow-xs'
+                        : 'text-blue-700 hover:text-blue-900 hover:bg-blue-50 border border-blue-200 hover:translate-y-[-1px]'
                     }`}
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
@@ -139,7 +139,7 @@ export const Navbar: React.FC = () => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   title="Sign Out"
                 >
                   Logout
@@ -149,13 +149,13 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <Link
                   to="/login"
-                  className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 border border-slate-200 bg-white transition-all duration-200 shadow-xs"
+                  className="px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 border border-slate-200 bg-white transition-all duration-200 shadow-xs hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  className="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] hover-lift"
                 >
                   Get Started
                 </Link>
@@ -168,12 +168,12 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform active:scale-90"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-nav-menu"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -187,11 +187,11 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div id="mobile-nav-menu" className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg">
+        <div id="mobile-nav-menu" className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-5 space-y-2 shadow-lg animate-fade-in-down">
           <Link
             to="/stations"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+            className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors"
           >
             Charging Hubs
           </Link>
@@ -200,28 +200,28 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors"
               >
                 Dashboard
               </Link>
               <Link
                 to="/vehicles"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors"
               >
                 My Garage
               </Link>
               <Link
                 to="/sessions"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors"
               >
                 Charging Sessions
               </Link>
               <Link
                 to="/wallet"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50"
+                className="block px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors"
               >
                 Wallet & Plans
               </Link>
@@ -229,7 +229,7 @@ export const Navbar: React.FC = () => {
                 <Link
                   to="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 rounded-lg text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200"
+                  className="block px-3 py-2 rounded-lg text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 transition-colors"
                 >
                   ⚡ Admin Operations
                 </Link>
@@ -244,7 +244,7 @@ export const Navbar: React.FC = () => {
                     handleLogout();
                     setMobileMenuOpen(false);
                   }}
-                  className="px-3 py-1.5 text-xs text-rose-600 bg-rose-50 rounded-lg border border-rose-200 font-semibold"
+                  className="px-3 py-1.5 text-xs text-rose-600 bg-rose-50 rounded-lg border border-rose-200 font-semibold hover:bg-rose-100 transition-colors cursor-pointer"
                 >
                   Logout
                 </button>
@@ -255,14 +255,14 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-xl"
+                className="flex-1 text-center py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 to="/register"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center py-2.5 text-xs font-bold text-white bg-blue-600 rounded-xl shadow-md"
+                className="flex-1 text-center py-2.5 text-xs font-bold text-white bg-blue-600 rounded-xl shadow-md hover:bg-blue-700 transition-colors"
               >
                 Get Started
               </Link>

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi, ApiError } from '../../api/client';
 import type { AdminDashboard } from '../../types';
+import { CountUp, MetricCardSkeleton, GlowCard } from '../../components/animations';
 
 export const AdminDashboardPage: React.FC = () => {
   const [dashboard, setDashboard] = useState<AdminDashboard | null>(null);
@@ -51,9 +52,14 @@ export const AdminDashboardPage: React.FC = () => {
 
   if (loading && !dashboard) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-sm text-slate-500">Loading system metrics from Spring Boot backend...</p>
+      <div className="space-y-6 animate-fade-in">
+        <div className="h-10 w-64 bg-slate-200/70 rounded-xl animate-shimmer" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <MetricCardSkeleton />
+          <MetricCardSkeleton />
+          <MetricCardSkeleton />
+          <MetricCardSkeleton />
+        </div>
       </div>
     );
   }
@@ -104,52 +110,58 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* Top Stat Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in-up">
         {/* Total Customers */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group hover:border-blue-400 hover:shadow-md transition">
+        <GlowCard className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group" maxTilt={5}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Registered Users</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:rotate-6 transition-transform">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-black font-mono tabular-nums text-slate-900">{d.customerCount}</div>
+          <div className="text-3xl font-black font-mono tabular-nums text-slate-900">
+            <CountUp end={d.customerCount} />
+          </div>
           <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
             <span className="text-blue-700 font-bold">{d.vehicleCount}</span> registered EVs
           </div>
-        </div>
+        </GlowCard>
 
         {/* Stations */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group hover:border-blue-400 hover:shadow-md transition">
+        <GlowCard className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group" maxTilt={5}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Charging Hubs</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:rotate-6 transition-transform">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
           </div>
-          <div className="text-3xl font-black font-mono tabular-nums text-slate-900">{d.stationCount}</div>
+          <div className="text-3xl font-black font-mono tabular-nums text-slate-900">
+            <CountUp end={d.stationCount} />
+          </div>
           <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
             <span className="text-blue-700 font-bold">{d.chargerCount}</span> active EVSE dispensers
           </div>
-        </div>
+        </GlowCard>
 
         {/* Active Charging Sessions */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group hover:border-blue-400 hover:shadow-md transition">
+        <GlowCard className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group" maxTilt={5} glowColor="rgba(2, 132, 199, 0.2)">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Charging</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:rotate-6 transition-transform">
               <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <div className="text-3xl font-black font-mono tabular-nums text-slate-900">{d.activeSessions}</div>
+            <div className="text-3xl font-black font-mono tabular-nums text-slate-900">
+              <CountUp end={d.activeSessions} />
+            </div>
             {d.activeSessions > 0 && (
               <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
             )}
@@ -157,23 +169,23 @@ export const AdminDashboardPage: React.FC = () => {
           <div className="text-xs text-slate-500 mt-1">
             <span className="text-blue-700 font-semibold font-mono tabular-nums">{d.completedSessions}</span> completed sessions
           </div>
-        </div>
+        </GlowCard>
 
         {/* Total Energy Consumed */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group hover:border-blue-400 hover:shadow-md transition">
+        <GlowCard className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs relative overflow-hidden group" maxTilt={5}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Energy Delivered</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:rotate-6 transition-transform">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
           </div>
           <div className="text-3xl font-black font-mono tabular-nums text-slate-900">
-            {Number(d.totalEnergyKwh).toFixed(1)} <span className="text-sm font-normal text-slate-400">kWh</span>
+            <CountUp end={Number(d.totalEnergyKwh)} decimals={1} suffix=" kWh" />
           </div>
           <div className="text-xs text-slate-500 mt-1">Network throughput aggregate</div>
-        </div>
+        </GlowCard>
       </div>
 
       {/* Charger Fleet Health & Financial Highlights */}
@@ -329,7 +341,7 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Link
             to="/admin/stations"
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover-lift active:scale-95 transition group"
           >
             <div className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center justify-between">
               <span>Stations & Chargers</span>
@@ -340,7 +352,7 @@ export const AdminDashboardPage: React.FC = () => {
 
           <Link
             to="/admin/tariffs"
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover-lift active:scale-95 transition group"
           >
             <div className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center justify-between">
               <span>Tariff Rates</span>
@@ -351,7 +363,7 @@ export const AdminDashboardPage: React.FC = () => {
 
           <Link
             to="/admin/maintenance"
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover-lift active:scale-95 transition group"
           >
             <div className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center justify-between">
               <span>Maintenance Logs</span>
@@ -362,7 +374,7 @@ export const AdminDashboardPage: React.FC = () => {
 
           <Link
             to="/admin/audit-logs"
-            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:shadow-sm transition group"
+            className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover-lift active:scale-95 transition group"
           >
             <div className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition flex items-center justify-between">
               <span>Security Audit Trail</span>
